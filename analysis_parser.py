@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+from bs4.element import NavigableString
 
 
 class AnalysisParser:
@@ -27,6 +28,8 @@ class AnalysisParser:
         continue
       elif line[0] == unicode('Mediaani'):  # Table group summary
         continue
+      elif len(line) != len(AnalysisParser.SUMMARY_LINE_ORDER):  # Line is wrong length for a summary line
+        continue
       else:  # Should be a summary line
         summaries.append(AnalysisParser.line_to_summary(line))
     return summaries
@@ -46,6 +49,8 @@ class AnalysisParser:
 
   @staticmethod
   def get_tabular_lines(page):
+    if isinstance(page, NavigableString):  # page content was just a string
+      return []
     lines = {}
     for text in page.select('figure text'):
         line_id = text['bbox'].split(',')[1]
