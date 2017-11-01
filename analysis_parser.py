@@ -10,7 +10,7 @@ class AnalysisParser:
 
   @staticmethod
   def get_company_summaries(analysis_xml):
-    soup = BeautifulSoup(analysis_xml, "html5lib")
+    soup = BeautifulSoup(analysis_xml, "html5lib", from_encoding='utf-8')
     summaries = []
     for page in soup.pages:
       summaries += AnalysisParser.get_page_summaries(page)
