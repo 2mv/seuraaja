@@ -5,14 +5,10 @@ from converter import Converter
 from analysis_parser import AnalysisParser
 from recommendations import Recommendations
 from mailer import Mailer
+from discoverer import Discoverer
 
 
-try:
-  morning_analysis_url = sys.argv[1]
-except IndexError:
-  print("Please provide analysis file URL as first argument")
-  sys.exit(1)
-
+morning_analysis_url = Discoverer.determine_analysis_url()
 with Downloader.download_to_tmp(morning_analysis_url) as analysis_file:
   analysis_xml = Converter.to_xml(analysis_file)
 company_summaries = AnalysisParser.get_company_summaries(analysis_xml)
@@ -25,9 +21,9 @@ new_recommendations = Recommendations.get_new_recommendations(current_recommenda
 
 if len(changed_recommendations) > 0 or len(new_recommendations) > 0:
   try:
-    to_addr = sys.argv[2]
+    to_addr = sys.argv[1]
   except IndexError:
-    print("Please provide email address to send results to as second argument")
+    print("Please provide as argument the email address to send results to")
     sys.exit(1)
   Mailer.send_recommendations(changed_recommendations, new_recommendations, to_addr)
 
